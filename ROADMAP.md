@@ -1,7 +1,7 @@
 # Gemini CLI Roadmap
 
 The [Official Gemini CLI Roadmap](https://github.com/orgs/google-gemini/projects/11/)
-
+htop
 Gemini CLI is an open-source AI agent that brings the power of Gemini directly into your terminal. It provides lightweight access to Gemini, giving you the most direct path from your prompt to our model.
 
 This document outlines our approach to the Gemini CLI roadmap. Here, you'll find our guiding principles and a breakdown of the key areas we are
