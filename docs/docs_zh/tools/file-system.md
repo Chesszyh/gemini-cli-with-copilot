@@ -119,8 +119,10 @@ Gemini CLI 提供了一套全面的工具，用于与本地文件系统交互。
   - `old_string` (字符串，必需)：要替换的确切文字文本。
 
     **关键：** 此字符串必须唯一标识要更改的单个实例。它应包含目标文本 _之前_ 和 _之后_ 至少 3 行上下文，精确匹配空格和缩进。如果 `old_string` 为空，则工具会尝试在 `file_path` 处创建一个新文件，并将 `new_string` 作为内容。
+
   - `new_string` (字符串，必需)：替换 `old_string` 的确切文字文本。
   - `expected_replacements` (数字，可选)：要替换的出现次数。默认为 `1`。
+
 - **行为：**
   - 如果 `old_string` 为空且 `file_path` 不存在，则创建包含 `new_string` 作为内容的新文件。
   - 如果 `old_string` 为提供，它会读取 `file_path` 并尝试查找 `old_string` 的一个精确出现。
