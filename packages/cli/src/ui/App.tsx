@@ -85,6 +85,8 @@ import { useKittyKeyboardProtocol } from './hooks/useKittyKeyboardProtocol.js';
 import { keyMatchers, Command } from './keyMatchers.js';
 import * as fs from 'fs';
 import { UpdateNotification } from './components/UpdateNotification.js';
+// import { useShellSession } from './hooks/useShellSession.js'; // TODO: Integrate shell functionality
+// import { ShellView } from './components/ShellView.js'; // TODO: Integrate shell functionality
 import {
   isProQuotaExceededError,
   isGenericQuotaExceededError,
@@ -133,6 +135,11 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
   const { stdout } = useStdout();
   const nightly = version.includes('nightly');
   const { history, addItem, clearItems, loadHistory } = useHistory();
+  // const shellSession = useShellSession({
+  //   config,
+  //   settings,
+  //   geminiClient: config.getGeminiClient(),
+  // }); // TODO: Integrate shell functionality
 
   const [idePromptAnswered, setIdePromptAnswered] = useState(false);
   const currentIDE = config.getIdeClient().getCurrentIde();
