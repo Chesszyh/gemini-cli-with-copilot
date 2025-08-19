@@ -4,6 +4,8 @@
 
 ### cli
 
+- `nonInteractiveCli.ts`: 所有非交互式命令（例如 gemini "我的问题"）的起点
+
 #### config
 
 - **settings.ts**: 优先级
@@ -115,16 +117,26 @@
     - `submitQuery`: 可中断的、支持多轮和续写的对话提交逻辑
 - components
   - AsciiArt.ts: GEMINI logo
-  - text-buffer.ts: 终端文本编辑引擎的后端逻辑
-    - 太过复杂，用到再改
+  - **text-buffer.ts**: 终端文本编辑引擎的后端逻辑
+    - 逻辑太过复杂，用到再改
+    - `!`
+      - 进入`textBufferReducer`的'insert'情况，
   - **InputPrompt.tsx**: 输入React组件
+    - NOTE 调试到这里之后，会进入一个js文件，循环多次才会逐渐渲染出cli窗口。窗口是一次flush out显示出来的。显示出来之后，就会进入`text-buffer.js`
     - 用户输入和应用逻辑之间的“控制器”。接收一个 `TextBuffer` 实例（参考`components/text-buffer.ts`）作为 prop，并监听用户的键盘事件，决定执行快捷键命令还是将按键输入传递给文本编辑组件
+    - `handleInput`的返回值，是一个渲染好的Input React 组件，包括：
+      - 前缀状态符号：`>`, `!`, or `(r:)`
+      - 多行渲染、光标高亮及行尾特判
+      - `SuggestionsDisplay` list: completion and reverseSearchActive
 - context
   - **KeypressContext.tsx**: 快捷键输入
     - `parseKittySequence`: 对kitty协议终端的支持
     - `handleRawKeypress`: 对粘贴模式的识别和事件分发
     - `handleKeypress`
-
+- utils
+  - ConsolePatcher.ts: 在运行时拦截和处理控制台输出。常见场景包括日志收集、调试信息过滤、或将日志转发到自定义处理器。
+  - kittyProtocolDetector.ts: 通过`detectAndEnableKittyProtocol`检测和启用Kitty协议支持。
+    - [kitty](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
 ### core
 
 #### core
@@ -136,7 +148,6 @@
   - **FIX**: `isThinkingSupported`:`if (model.startsWith('gemini-2.5')) return true;`修改来支持其他模型
   - TODO 看一下对话历史，学习
 - **contentGenerator.ts**：
-  -
 
 #### ide
 
@@ -146,6 +157,25 @@
 
 ## Note
 
+### Language
+
 - `Buffer`: 处理二进制数据，`Buffer.alloc(0)`：分配一个空的二进制数据容器
   - 可用于命令行剪切板处理
-  -
+- `??`: [Nullish Coalescing Operator](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing)（空值合并运算符）。它的作用是：如果左侧的值是 null 或 undefined，就返回右侧的值，否则返回左侧的值。左结合。
+- `Promise`: 异步操作，返回后要用 await 或 .then() 处理。表示未来可能完成或失败的操作及其结果。
+
+### Design
+
+- `packages/cli/src/config/config.ts` Line 346 `Hack`:
+
+`loadHierarchicalGeminiMemory` 需要知道 `contextFileName`（配置项之一）, 但这个函数在 `createServerConfig`(配置被创建) 之前调用. 而正常情况下，配置应该先创建，然后传递给需要的函数。
+
+所以，代码选择直接调用memory tool `setGeminiMdFilename`，设置全局状态。
+
+## Debugging
+
+- 输入框初始化结束后，需要取消InputPrompt.tsx 235:23断点，否则表现来看就是无限循环
+- **ISSUE 调试点丢失**：如何调试/忽略React？
+
+> 你有哪些可用工具？调用并返回结果，我现在正在逐行debug你的代码，也就是当前工作区下的代码，我想看你工具调用的过程。
+

@@ -534,6 +534,8 @@ export const InputPrompt: React.FC<InputPromptProps> = ({
     buffer.visualCursor;
   const scrollVisualRow = buffer.visualScrollRow;
 
+  // `>`, `!`, or `(r:)`
+  // `SuggestionsDisplay` list: completion and reverseSearchActive
   return (
     <>
       <Box

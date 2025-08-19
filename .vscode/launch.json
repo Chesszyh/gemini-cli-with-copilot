@@ -10,7 +10,7 @@
       "name": "Build & Launch CLI",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "build-and-start"],
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "env": {
@@ -33,7 +33,7 @@
       "name": "Attach",
       "port": 9229,
       "request": "attach",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
       "type": "node",
       // fix source mapping when debugging in sandbox using global installation
       // note this does not interfere when remoteRoot is also ${workspaceFolder}/packages
@@ -44,7 +44,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "skipFiles": ["<node_internals>/**"],
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"],
       "program": "${file}",
       "outFiles": ["${workspaceFolder}/**/*.js"]
     },
@@ -66,7 +66,7 @@
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "skipFiles": ["<node_internals>/**"]
+      "skipFiles": ["<node_internals>/**", "${workspaceFolder}/node_modules/**"]
     }
   ],
   "inputs": [
