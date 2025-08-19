@@ -60,6 +60,10 @@ describe('keyMatchers', () => {
       key.name === 'return' && !key.ctrl,
     [Command.ACCEPT_SUGGESTION_REVERSE_SEARCH]: (key: Key) =>
       key.name === 'tab',
+    // Add tests
+    [Command.SEARCH_HISTORY]: (key: Key) => key.ctrl && key.name === 'f',
+    [Command.TOGGLE_FOCUS_MODE]: (key: Key) => key.ctrl && key.name === 'k',
+    [Command.TOGGLE_FUN_MODE]: (key: Key) => key.ctrl && key.name === 'm',
   };
 
   // Test data for each command with positive and negative test cases

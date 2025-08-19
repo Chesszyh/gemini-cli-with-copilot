@@ -68,7 +68,9 @@ export class AiCommandSuggestionService {
   /**
    * Fallback basic command suggestions
    */
-  private getBasicCommandSuggestions(partialCommand: string): CommandSuggestion[] {
+  private getBasicCommandSuggestions(
+    partialCommand: string,
+  ): CommandSuggestion[] {
     const basicSuggestions: CommandSuggestion[] = [
       {
         command: `${partialCommand} --help`,
@@ -138,22 +140,37 @@ export class AiCommandSuggestionService {
   /**
    * Fallback basic error suggestions
    */
-  private getBasicErrorSuggestions(command: string, errorOutput: string): ErrorSuggestion[] {
+  private getBasicErrorSuggestions(
+    command: string,
+    errorOutput: string,
+  ): ErrorSuggestion[] {
     const suggestions: ErrorSuggestion[] = [];
 
-    if (errorOutput.includes('command not found') || errorOutput.includes('not found')) {
+    if (
+      errorOutput.includes('command not found') ||
+      errorOutput.includes('not found')
+    ) {
       suggestions.push({
         problem: 'Command not found',
         solution: 'Install the missing command or check spelling',
-        preventiveMeasures: ['Use "which <command>" to verify installation', 'Check PATH environment variable'],
+        preventiveMeasures: [
+          'Use "which <command>" to verify installation',
+          'Check PATH environment variable',
+        ],
       });
     }
 
-    if (errorOutput.includes('permission denied') || errorOutput.includes('Permission denied')) {
+    if (
+      errorOutput.includes('permission denied') ||
+      errorOutput.includes('Permission denied')
+    ) {
       suggestions.push({
         problem: 'Permission denied',
         solution: 'Run with sudo or change file permissions',
-        preventiveMeasures: ['Check file ownership with "ls -la"', 'Use chmod to adjust permissions'],
+        preventiveMeasures: [
+          'Check file ownership with "ls -la"',
+          'Use chmod to adjust permissions',
+        ],
       });
     }
 
@@ -161,15 +178,24 @@ export class AiCommandSuggestionService {
       suggestions.push({
         problem: 'File or directory not found',
         solution: 'Check the file path and ensure it exists',
-        preventiveMeasures: ['Use "ls" to list directory contents', 'Verify file spelling and case'],
+        preventiveMeasures: [
+          'Use "ls" to list directory contents',
+          'Verify file spelling and case',
+        ],
       });
     }
 
-    if (errorOutput.includes('syntax error') || errorOutput.includes('invalid syntax')) {
+    if (
+      errorOutput.includes('syntax error') ||
+      errorOutput.includes('invalid syntax')
+    ) {
       suggestions.push({
         problem: 'Syntax error in command',
         solution: 'Check command syntax and fix any typos',
-        preventiveMeasures: ['Use command --help for usage information', 'Check command documentation'],
+        preventiveMeasures: [
+          'Use command --help for usage information',
+          'Check command documentation',
+        ],
       });
     }
 
@@ -177,7 +203,11 @@ export class AiCommandSuggestionService {
       suggestions.push({
         problem: 'Command failed',
         solution: 'Check command syntax and try with --help flag',
-        preventiveMeasures: ['Read command documentation', 'Check for typos', 'Verify required dependencies'],
+        preventiveMeasures: [
+          'Read command documentation',
+          'Check for typos',
+          'Verify required dependencies',
+        ],
       });
     }
 

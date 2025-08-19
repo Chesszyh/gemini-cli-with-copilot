@@ -2,7 +2,7 @@
  * @license
  * Copyright 2025 Chesszyh
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import { Box, Text } from 'ink';
 import { ShellEnvironmentInfo } from '../../services/EnhancedShellSession.js';
@@ -13,7 +13,11 @@ interface ShellViewProps {
   isEnhanced: boolean;
 }
 
-export function ShellView({ output, environmentInfo, isEnhanced }: ShellViewProps) {
+export function ShellView({
+  output,
+  environmentInfo,
+  isEnhanced,
+}: ShellViewProps) {
   return (
     <Box flexDirection="column" flexGrow={1}>
       {isEnhanced && environmentInfo && (

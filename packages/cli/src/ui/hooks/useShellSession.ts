@@ -2,7 +2,7 @@
  * @license
  * Copyright 2025 Chesszyh
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import {
@@ -33,7 +33,9 @@ export interface UseShellSessionReturn extends ShellSessionState {
   endSession: () => void;
   sendInput: (data: string) => void;
   clearOutput: () => void;
-  getCommandSuggestion: (partialCommand: string) => Promise<CommandSuggestion[]>;
+  getCommandSuggestion: (
+    partialCommand: string,
+  ) => Promise<CommandSuggestion[]>;
   highlightCommand: (command: string) => string;
 }
 
@@ -43,7 +45,9 @@ export interface UseShellSessionOptions {
   geminiClient?: GeminiClient;
 }
 
-export function useShellSession(options: UseShellSessionOptions): UseShellSessionReturn {
+export function useShellSession(
+  options: UseShellSessionOptions,
+): UseShellSessionReturn {
   const [state, setState] = useState<ShellSessionState>({
     isActive: false,
     output: '',
@@ -63,11 +67,11 @@ export function useShellSession(options: UseShellSessionOptions): UseShellSessio
   }, []);
 
   const handleExit = useCallback(() => {
-    setState({ 
-      isActive: false, 
-      output: '', 
-      pid: null, 
-      isEnhanced: false 
+    setState({
+      isActive: false,
+      output: '',
+      pid: null,
+      isEnhanced: false,
     });
     sessionRef.current = null;
   }, []);
@@ -82,11 +86,11 @@ export function useShellSession(options: UseShellSessionOptions): UseShellSessio
     sessionRef.current?.kill();
     sessionRef.current = null;
     // Deactivate the session on error
-    setState((prevState) => ({ 
-      ...prevState, 
-      isActive: false, 
+    setState((prevState) => ({
+      ...prevState,
+      isActive: false,
       pid: null,
-      isEnhanced: false
+      isEnhanced: false,
     }));
   }, []);
 
@@ -157,11 +161,11 @@ export function useShellSession(options: UseShellSessionOptions): UseShellSessio
       sessionRef.current.kill();
       sessionRef.current = null;
     }
-    setState({ 
-      isActive: false, 
-      output: '', 
-      pid: null, 
-      isEnhanced: false 
+    setState({
+      isActive: false,
+      output: '',
+      pid: null,
+      isEnhanced: false,
     });
   }, []);
 
@@ -176,12 +180,15 @@ export function useShellSession(options: UseShellSessionOptions): UseShellSessio
     setState((prevState) => ({ ...prevState, output: '' }));
   }, []);
 
-  const getCommandSuggestion = useCallback(async (partialCommand: string): Promise<CommandSuggestion[]> => {
-    if (sessionRef.current && 'getCommandSuggestion' in sessionRef.current) {
-      return sessionRef.current.getCommandSuggestion(partialCommand);
-    }
-    return [];
-  }, []);
+  const getCommandSuggestion = useCallback(
+    async (partialCommand: string): Promise<CommandSuggestion[]> => {
+      if (sessionRef.current && 'getCommandSuggestion' in sessionRef.current) {
+        return sessionRef.current.getCommandSuggestion(partialCommand);
+      }
+      return [];
+    },
+    [],
+  );
 
   const highlightCommand = useCallback((command: string): string => {
     if (sessionRef.current && 'highlightCommand' in sessionRef.current) {

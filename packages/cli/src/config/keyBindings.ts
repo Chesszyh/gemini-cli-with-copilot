@@ -2,6 +2,9 @@
  * @license
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
+ *
+ * Modifications Copyright 2025 Chesszyh
+ * - Added support for new key bindings: mode
  */
 
 /**
@@ -30,6 +33,9 @@ export enum Command {
   NAVIGATION_UP = 'navigationUp',
   NAVIGATION_DOWN = 'navigationDown',
 
+  // History Search
+  SEARCH_HISTORY = 'searchHistory',
+
   // Auto-completion
   ACCEPT_SUGGESTION = 'acceptSuggestion',
   COMPLETION_UP = 'completionUp',
@@ -55,6 +61,10 @@ export enum Command {
   REVERSE_SEARCH = 'reverseSearch',
   SUBMIT_REVERSE_SEARCH = 'submitReverseSearch',
   ACCEPT_SUGGESTION_REVERSE_SEARCH = 'acceptSuggestionReverseSearch',
+
+  // Mode Switch
+  TOGGLE_FOCUS_MODE = 'focusMode',
+  TOGGLE_FUN_MODE = 'funMode',
 }
 
 /**
@@ -120,6 +130,9 @@ export const defaultKeyBindings: KeyBindingConfig = {
   // Original: key.name === 'down'
   [Command.NAVIGATION_DOWN]: [{ key: 'down' }],
 
+  // History search
+  [Command.SEARCH_HISTORY]: [{ key: 'f', ctrl: true }],
+
   // Auto-completion
   // Original: key.name === 'tab' || (key.name === 'return' && !key.ctrl)
   [Command.ACCEPT_SUGGESTION]: [{ key: 'tab' }, { key: 'return', ctrl: false }],
@@ -181,4 +194,15 @@ export const defaultKeyBindings: KeyBindingConfig = {
   [Command.SUBMIT_REVERSE_SEARCH]: [{ key: 'return', ctrl: false }],
   // Original: key.name === 'tab'
   [Command.ACCEPT_SUGGESTION_REVERSE_SEARCH]: [{ key: 'tab' }],
+
+  // Mode
+  // Toggle between focus and entertainment mode
+  [Command.TOGGLE_FOCUS_MODE]: [{ key: 'k', ctrl: true }],
+  [Command.TOGGLE_FUN_MODE]: [{ key: 'm', ctrl: true }],
+
+  // TODO
+  // // Split screen toggle (for multi-window setup)
+  // [Command.SPLIT_SCREEN]: [{ key: 'd', ctrl: true }],
+  // // Toggle between split windows
+  // [Command.SWITCH_WINDOW]: [{ key: 'tab', ctrl: true }],
 };

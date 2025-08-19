@@ -2,7 +2,7 @@
  * @license
  * Copyright 2025 Chesszyh
  * SPDX-License-Identifier: Apache-2.0
-*/
+ */
 
 import * as pty from 'node-pty';
 import os from 'node:os';
@@ -25,7 +25,10 @@ export interface ShellSessionOptions {
 }
 
 export function createShellSession(options: ShellSessionOptions): ShellSession {
-  const shell = os.platform() === 'win32' ? 'powershell.exe' : process.env['SHELL'] || 'bash';
+  const shell =
+    os.platform() === 'win32'
+      ? 'powershell.exe'
+      : process.env['SHELL'] || 'bash';
 
   let ptyProcess: IPty;
 

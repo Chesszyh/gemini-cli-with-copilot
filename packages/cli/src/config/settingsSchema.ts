@@ -420,7 +420,8 @@ export const SETTINGS_SCHEMA = {
     category: 'Advanced',
     requiresRestart: false,
     default: true,
-    description: 'Enable enhanced shell mode with syntax highlighting and autosuggestions.',
+    description:
+      'Enable enhanced shell mode with syntax highlighting and autosuggestions.',
     showInDialog: true,
   },
   shellSyntaxHighlighting: {

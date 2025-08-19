@@ -11,7 +11,9 @@ import { CommandSuggestion } from '../../services/EnhancedShellSession.js';
 interface SmartCommandInputProps {
   value: string;
   onSubmit: (command: string) => void;
-  getCommandSuggestion: (partialCommand: string) => Promise<CommandSuggestion[]>;
+  getCommandSuggestion: (
+    partialCommand: string,
+  ) => Promise<CommandSuggestion[]>;
   highlightCommand: (command: string) => string;
   isActive: boolean;
 }
@@ -67,14 +69,14 @@ export function SmartCommandInput({
         <Text color="green">$ </Text>
         <Text>{highlightedCommand}</Text>
       </Box>
-      
+
       {/* AI-powered suggestions */}
       {showSuggestions && suggestions.length > 0 && (
         <Box flexDirection="column" marginTop={1}>
           <Text color="gray">AI Suggestions:</Text>
           {suggestions.slice(0, 3).map((suggestion, index) => (
             <Box key={index} marginLeft={2}>
-              <Text 
+              <Text
                 color={index === selectedSuggestionIndex ? 'yellow' : 'gray'}
                 bold={index === selectedSuggestionIndex}
               >
