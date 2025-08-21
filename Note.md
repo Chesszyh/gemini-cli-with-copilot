@@ -1,5 +1,10 @@
 # GEMINI CLI
 
+## Wiki
+
+- [Debug](https://deepwiki.com/search/-typescript_7a15f446-4e75-4ef4-85eb-ac53effeccdb)
+- [Auto-complete](https://deepwiki.com/search/_6012deae-b0f5-49df-bb2e-30fa9bf8ce96)
+
 ## Structure
 
 ### cli
@@ -137,6 +142,7 @@
   - ConsolePatcher.ts: 在运行时拦截和处理控制台输出。常见场景包括日志收集、调试信息过滤、或将日志转发到自定义处理器。
   - kittyProtocolDetector.ts: 通过`detectAndEnableKittyProtocol`检测和启用Kitty协议支持。
     - [kitty](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
+
 ### core
 
 #### core
@@ -148,7 +154,7 @@
   - **FIX**: `isThinkingSupported`:`if (model.startsWith('gemini-2.5')) return true;`修改来支持其他模型
   - TODO 看一下对话历史，学习
 - **contentGenerator.ts**：
-
+- **coreToolScheduler.ts**: 
 #### ide
 
 - **ide-client.ts**
