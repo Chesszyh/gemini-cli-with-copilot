@@ -13,6 +13,8 @@
 
 #### config
 
+- **config.ts**: 可以考虑精简CliArgs入口，因为`warp-terminal`也没有提供任何命令行参数功能
+  - 但是目前是直接在gemini cli基础上改，并且也要及时合并上游快速开发分支的更改，所以还是保留现有结构和参数！
 - **settings.ts**: 优先级
   1. Command-line arguments
   2. Environment variables
@@ -142,6 +144,29 @@
   - ConsolePatcher.ts: 在运行时拦截和处理控制台输出。常见场景包括日志收集、调试信息过滤、或将日志转发到自定义处理器。
   - kittyProtocolDetector.ts: 通过`detectAndEnableKittyProtocol`检测和启用Kitty协议支持。
     - [kitty](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
+- themes
+  - **配色**：颜色叠加，不是简单的设置绝对颜色，而是叠加代码内hard-code color(比如`/help`的`AccentPurple`)+theme color(比如theme-github light)，得到一个最终颜色。
+  - color-utils.ts：颜色格式检查，css颜色解析；TODO 亮度调整
+  - no-color.ts：无色主题，排除颜色干扰
+  - cute.ts：自定义主题
+  - semantic-tokens.ts
+  - theme-manager.ts：管理所有主题，根据用户配置加载并返回特定的主题对象
+  - theme.ts：核心文件，定义了所有主题都必须遵守的 TypeScript 接口
+    - type: 'light' | 'dark' | 'ansi' | 'custom' - 主题的类型，决定了其底色（亮色、暗色或终端原生）。
+    - Background: CLI界面的主要背景色。
+    - Foreground: 默认的前景色，也就是最主要的文本颜色。
+    - LightBlue: 用于代码中的属性（attribute）等。
+    - AccentBlue: 关键元素的强调色，如代码中的关键字、链接、选中的UI边框等。
+    - AccentPurple: 另一种强调色，通常用于代码中的变量。
+    - AccentCyan: 用于代码中的类型（type）、内置函数等。
+    - AccentGreen: 用于表示“成功”状态，以及代码中的数字、类名。
+    - AccentYellow: 用于表示“警告”状态，以及代码中的字符串。
+    - AccentRed: 用于表示“错误”状态，以及代码中的正则表达式。
+    - DiffAdded: 在比较文件差异（diff）时，新增行的背景色。
+    - DiffRemoved: 在比较文件差异时，删除行的背景色。
+    - Comment: 代码注释的颜色。
+    - Gray: 次要信息的颜色，例如辅助文本、元数据等。
+    - GradientColors: 一个颜色数组，用于创建渐变效果(可能是`GEMINI` Logo)。
 
 ### core
 
@@ -209,29 +234,5 @@
 
 - **environmentContext.ts**：环境上下文管理，初始化和运行时均需要
 
-## Shell Mode
 
-## Note
-
-### Language
-
-- `Buffer`: 处理二进制数据，`Buffer.alloc(0)`：分配一个空的二进制数据容器
-  - 可用于命令行剪切板处理
-- `??`: [Nullish Coalescing Operator](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing)（空值合并运算符）。它的作用是：如果左侧的值是 null 或 undefined，就返回右侧的值，否则返回左侧的值。左结合。
-- `Promise`: 异步操作，返回后要用 await 或 .then() 处理。表示未来可能完成或失败的操作及其结果。
-
-### Design
-
-- `packages/cli/src/config/config.ts` Line 346 `Hack`:
-
-`loadHierarchicalGeminiMemory` 需要知道 `contextFileName`（配置项之一）, 但这个函数在 `createServerConfig`(配置被创建) 之前调用. 而正常情况下，配置应该先创建，然后传递给需要的函数。
-
-所以，代码选择直接调用memory tool `setGeminiMdFilename`，设置全局状态。
-
-## Debugging
-
-- 输入框初始化结束后，需要取消InputPrompt.tsx 235:23断点，否则表现来看就是无限循环
-- **ISSUE 调试点丢失**：如何调试/忽略React？
-
-> 你有哪些可用工具？调用并返回结果，我现在正在逐行debug你的代码，也就是当前工作区下的代码，我想看你工具调用的过程。
 
