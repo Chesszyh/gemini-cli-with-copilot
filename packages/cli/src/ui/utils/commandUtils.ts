@@ -27,6 +27,13 @@ export const isAtCommand = (query: string): boolean =>
  */
 export const isSlashCommand = (query: string): boolean => query.startsWith('/');
 
+/**
+ * Checks if a query string potentially represents an '#' command.
+ * @param text The input query string.
+ * @returns True if the query looks like a '#' command, false otherwise.
+ */
+export const isHashCommand = (text: string): boolean => text.startsWith('#');
+
 // Copies a string snippet to the clipboard for different platforms
 export const copyToClipboard = async (text: string): Promise<void> => {
   const run = (cmd: string, args: string[], options?: SpawnOptions) =>

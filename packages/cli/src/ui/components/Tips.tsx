@@ -40,6 +40,13 @@ export const Tips: React.FC<TipsProps> = ({ config }) => {
         </Text>{' '}
         for more information.
       </Text>
+      <Text color={Colors.Foreground}>
+        {geminiMdFileCount === 0 ? '5.' : '4.'} Enter{' '}
+        <Text bold color={Colors.AccentPurple}>
+          #
+        </Text>{' '}
+        to customize system prompts.
+      </Text>
     </Box>
   );
 };

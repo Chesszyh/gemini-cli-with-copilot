@@ -155,9 +155,59 @@
   - TODO 看一下对话历史，学习
 - **contentGenerator.ts**：
 - **coreToolScheduler.ts**: 
+
 #### ide
 
 - **ide-client.ts**
+
+#### telemetry
+
+- clearcut-logger.ts: 
+
+<details>
+  <summary>遥测数据 (Telemetry Data)</summary>
+
+这个 TypeScript 文件定义了 `ClearcutLogger` 类，它是一个复杂的单例（singleton）模块，负责从一个命令行应用中收集和传输遥测及使用数据。其主要目的是批量处理各种应用事件——例如会话启动、用户提示、API 调用和错误——并周期性地将它们发送到 `CLEARCUT_URL` 指定的远程日志服务。整个日志机制是条件性的；它仅在用户启用了使用情况统计时才激活（通过 `config.getUsageStatisticsEnabled()` 检查），从而确保用户隐私得到尊重。
+
+该日志记录器的核心设计围绕着高效的事件处理。它不为每个事件都发送一个网络请求，而是使用一个 `FixedDeque`（一个具有固定容量的双端队列）在内存中缓冲事件。这个队列的容量上限为 `MAX_EVENTS`，以防止内存无限制增长；如果队列已满，最旧的事件将被丢弃以便为新事件腾出空间。事件在两种主要情况下会被“刷送”（flush）到服务器：一是周期性地，当 `flushIfNeeded` 方法确定自上次成功传输以来已经过了一个设定的时间间隔（`FLUSH_INTERVAL_MS`）；二是在处理关键的生命周期事件时，如会话的开始和结束，会立即刷送。
+
+该类健壮地处理了异步操作和潜在的失败。`flushToClearcut` 方法管理网络请求，并使用 `flushing` 和 `pendingFlush` 这两个布尔标志来防止并发的刷送操作，确保同一时间只有一个网络请求处于活动状态。如果刷送因网络错误或不成功的 HTTP 响应而失败，`requeueFailedEvents` 方法会被调用。此函数会智能地将有限数量的、最近失败的事件重新排入队列的前部，使它们在下一次重试中获得优先处理。这使得日志记录器能够应对暂时的网络问题，而不会因大量失败事件的积压而陷入困境。
+
+每个日志事件都是一个富含宝贵元数据的结构化对象。该类为不同类型的事件提供了特定的方法，如 `logNewPromptEvent` 和 `logToolCallEvent`。这些方法最终使用 `createLogEvent` 和 `addDefaultFields` 来构建最终的载荷（payload）。`addDefaultFields` 这个辅助函数尤其重要，因为它会自动为每个事件附加一致的上下文信息，包括会话 ID、应用版本、Git 提交哈希以及“surface”（使用场景）。“surface”由 `determineSurface` 函数确定，该函数通过检查环境变量来识别 CLI 的运行环境（例如，在 VSCode 中、GitHub Action 中，还是在标准终端中），从而提供关于用户环境的宝贵洞察。
+</details>
+
+#### utils
+
+- **nextSpeakerChecker.ts**: 检查下一个发言者
+
+<details>
+  <summary>`checkNextSpeaker`</summary>
+
+`checkNextSpeaker` 函数的执行逻辑可以分为两个主要阶段：**快捷规则检查（Heuristics）** 和 **LLM 调用检查（LLM-based Check）**。
+
+1.  **快捷规则检查 (Heuristics / Shortcuts)**
+
+    在进行昂贵的 LLM API 调用之前，代码首先会检查一些明确的、可以快速判断的情况。这是一种优化策略。
+
+    *   **检查函数响应 (`isFunctionResponse`)**: 如果对话历史中的最后一条消息是 `user` 角色的，并且其内容**完全**由工具（函数）的返回结果构成，那么模型**必须**是下一个发言者。因为模型需要处理这个工具的输出并决定下一步做什么。这是一个硬性规则。
+    *   **检查空模型响应**: 如果模型上一轮的回答是空的（`parts.length === 0`），这通常意味着它只是一个占位的、无实质内容的回复。用户对此无从反应，所以理应由模型继续发言。
+    *   **检查历史记录**: 如果没有历史记录，或者最后一条消息不是来自模型，那么就无法判断，直接返回 `null`。
+
+2.  **LLM 调用检查 (LLM-based Check)**
+
+    如果上述快捷规则都不适用，那么就需要借助另一个 LLM 的“智慧”来做判断。
+
+    *   **构建提示 (`CHECK_PROMPT`)**: 这是最核心的部分。代码将当前的对话历史和一段特殊的指令（`CHECK_PROMPT`）拼接在一起。这个指令要求一个新的、轻量级的 LLM（`gemini-flash`）扮演一个“裁判”的角色，**仅仅**分析它自己（模型）的上一轮回答，并根据一套严格的决策规则来判断谁该接话。
+    *   **决策规则**:
+        1.  **模型继续**: 如果模型明确表示它马上要做某事（比如调用工具），或者它的回答明显没说完（被截断了）。
+        2.  **用户接话 (因提问)**: 如果模型以一个直接向用户提出的问题结束。
+        3.  **用户接话 (默认情况)**: 如果模型完成了它的陈述或任务，并且不符合前两条规则，那么它就在等待用户的输入。
+    *   **强制 JSON 输出**: 通过向 `generateJson` API 提供一个 `RESPONSE_SCHEMA`，强制 LLM 返回一个特定格式的 JSON 对象：`{ reasoning: "...", next_speaker: "user" | "model" }`。这极大地提高了输出的可靠性和可解析性。
+    *   **返回结果**: 解析 LLM 返回的 JSON，并将其作为最终的判断结果。
+
+</details>
+
+- **environmentContext.ts**：环境上下文管理，初始化和运行时均需要
 
 ## Shell Mode
 
