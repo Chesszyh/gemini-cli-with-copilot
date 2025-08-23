@@ -75,42 +75,44 @@ export const copyToClipboard = async (text: string): Promise<void> => {
       return run('pbcopy', []);
     case 'linux':
       try {
-        await run('xclip', ['-selection', 'clipboard'], linuxOptions);
-      } catch (primaryError) {
+        // Prioritize Wayland-native clipboard utility
+        await run('wl-copy', [], linuxOptions);
+      } catch (waylandError) {
+        // Fallback to X11 utilities if wl-copy fails
         try {
-          // If xclip fails for any reason, try xsel as a fallback.
-          await run('xsel', ['--clipboard', '--input'], linuxOptions);
-        } catch (fallbackError) {
-          const xclipNotFound =
-            primaryError instanceof Error &&
-            (primaryError as NodeJS.ErrnoException).code === 'ENOENT';
-          const xselNotFound =
-            fallbackError instanceof Error &&
-            (fallbackError as NodeJS.ErrnoException).code === 'ENOENT';
-          if (xclipNotFound && xselNotFound) {
+          await run('xclip', ['-selection', 'clipboard'], linuxOptions);
+        } catch (primaryError) {
+          try {
+            // If xclip fails for any reason, try xsel as a fallback.
+            await run('xsel', ['--clipboard', '--input'], linuxOptions);
+          } catch (fallbackError) {
+            const wlCopyNotFound =
+              waylandError instanceof Error &&
+              (waylandError as NodeJS.ErrnoException).code === 'ENOENT';
+            const xclipNotFound =
+              primaryError instanceof Error &&
+              (primaryError as NodeJS.ErrnoException).code === 'ENOENT';
+            const xselNotFound =
+              fallbackError instanceof Error &&
+              (fallbackError as NodeJS.ErrnoException).code === 'ENOENT';
+
+            if (wlCopyNotFound && xclipNotFound && xselNotFound) {
+              throw new Error(
+                'For Linux, please ensure wl-copy (for Wayland) or xclip/xsel (for X11) is installed.',
+              );
+            }
+
+            // Combine error messages for better debugging
+            const errorMessages = [
+              waylandError instanceof Error ? waylandError.message : String(waylandError),
+              primaryError instanceof Error ? primaryError.message : String(primaryError),
+              fallbackError instanceof Error ? fallbackError.message : String(fallbackError),
+            ].join('; ');
+
             throw new Error(
-              'Please ensure xclip or xsel is installed and configured.',
+              `All copy commands failed. Errors: ${errorMessages}`,
             );
           }
-
-          let primaryMsg =
-            primaryError instanceof Error
-              ? primaryError.message
-              : String(primaryError);
-          if (xclipNotFound) {
-            primaryMsg = `xclip not found`;
-          }
-          let fallbackMsg =
-            fallbackError instanceof Error
-              ? fallbackError.message
-              : String(fallbackError);
-          if (xselNotFound) {
-            fallbackMsg = `xsel not found`;
-          }
-
-          throw new Error(
-            `All copy commands failed. "${primaryMsg}", "${fallbackMsg}". `,
-          );
         }
       }
       return;
