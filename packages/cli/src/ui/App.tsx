@@ -34,14 +34,7 @@ import { useKittyKeyboardProtocol } from './hooks/useKittyKeyboardProtocol.js';
 import { keyMatchers, Command } from './keyMatchers.js';
 import * as fs from 'fs';
 import { UpdateNotification } from './components/UpdateNotification.js';
-// import { useShellSession } from './hooks/useShellSession.js'; // TODO: Integrate shell functionality
-// import { ShellView } from './components/ShellView.js'; // TODO: Integrate shell functionality
-import {
-  isProQuotaExceededError,
-  isGenericQuotaExceededError,
-  UserTierId,
-} from '@google/gemini-cli-core';
-import { UpdateObject } from './utils/updateCheck.js';
+import type { UpdateObject } from './utils/updateCheck.js';
 import ansiEscapes from 'ansi-escapes';
 import { OverflowProvider } from './contexts/OverflowContext.js';
 import { ShowMoreLines } from './components/ShowMoreLines.js';
