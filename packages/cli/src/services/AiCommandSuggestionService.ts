@@ -28,9 +28,9 @@ export interface CommandSuggestion {
  * Error suggestion response
  */
 export interface ErrorSuggestion {
-  problem: string;
-  solution: string;
-  preventiveMeasures: string[];
+  command: string;
+  description: string;
+  reason: string;
 }
 
 /**
@@ -151,12 +151,9 @@ export class AiCommandSuggestionService {
       errorOutput.includes('not found')
     ) {
       suggestions.push({
-        problem: 'Command not found',
-        solution: 'Install the missing command or check spelling',
-        preventiveMeasures: [
-          'Use "which <command>" to verify installation',
-          'Check PATH environment variable',
-        ],
+        command: `which ${command.split(' ')[0]} || echo "Command not found"`,
+        description: 'Check if command is installed',
+        reason: 'Command not found - verify installation or check spelling',
       });
     }
 
@@ -165,23 +162,17 @@ export class AiCommandSuggestionService {
       errorOutput.includes('Permission denied')
     ) {
       suggestions.push({
-        problem: 'Permission denied',
-        solution: 'Run with sudo or change file permissions',
-        preventiveMeasures: [
-          'Check file ownership with "ls -la"',
-          'Use chmod to adjust permissions',
-        ],
+        command: `sudo ${command}`,
+        description: 'Run with elevated privileges',
+        reason: 'Permission denied - try running as administrator',
       });
     }
 
     if (errorOutput.includes('No such file or directory')) {
       suggestions.push({
-        problem: 'File or directory not found',
-        solution: 'Check the file path and ensure it exists',
-        preventiveMeasures: [
-          'Use "ls" to list directory contents',
-          'Verify file spelling and case',
-        ],
+        command: `ls -la ${command.split(' ').slice(1).join(' ')}`,
+        description: 'Check if file exists',
+        reason: 'File or directory not found - verify the path',
       });
     }
 
@@ -190,24 +181,17 @@ export class AiCommandSuggestionService {
       errorOutput.includes('invalid syntax')
     ) {
       suggestions.push({
-        problem: 'Syntax error in command',
-        solution: 'Check command syntax and fix any typos',
-        preventiveMeasures: [
-          'Use command --help for usage information',
-          'Check command documentation',
-        ],
+        command: `${command.split(' ')[0]} --help`,
+        description: 'Show command help and syntax',
+        reason: 'Syntax error - check command format and options',
       });
     }
 
     if (suggestions.length === 0) {
       suggestions.push({
-        problem: 'Command failed',
-        solution: 'Check command syntax and try with --help flag',
-        preventiveMeasures: [
-          'Read command documentation',
-          'Check for typos',
-          'Verify required dependencies',
-        ],
+        command: `${command.split(' ')[0]} --help`,
+        description: 'Show command help',
+        reason: 'Command failed - check syntax and usage',
       });
     }
 

@@ -713,6 +713,55 @@ const SETTINGS_SCHEMA = {
     },
   },
 
+  shell: {
+    type: 'object',
+    label: 'Shell',
+    category: 'Shell',
+    requiresRestart: false,
+    default: {},
+    description: 'Enhanced shell session settings.',
+    showInDialog: false,
+    properties: {
+      shellEnhancementEnabled: {
+        type: 'boolean',
+        label: 'Enable Shell Enhancement',
+        category: 'Shell',
+        requiresRestart: false,
+        default: true,
+        description:
+          'Enable enhanced shell features like syntax highlighting and AI suggestions.',
+        showInDialog: true,
+      },
+      shellSyntaxHighlighting: {
+        type: 'boolean',
+        label: 'Syntax Highlighting',
+        category: 'Shell',
+        requiresRestart: false,
+        default: true,
+        description: 'Enable syntax highlighting in shell commands.',
+        showInDialog: true,
+      },
+      shellAutosuggestions: {
+        type: 'boolean',
+        label: 'Shell Autosuggestions',
+        category: 'Shell',
+        requiresRestart: false,
+        default: true,
+        description: 'Enable shell autosuggestions.',
+        showInDialog: true,
+      },
+      shellAiSuggestions: {
+        type: 'boolean',
+        label: 'AI Suggestions',
+        category: 'Shell',
+        requiresRestart: false,
+        default: true,
+        description: 'Enable AI-powered command suggestions.',
+        showInDialog: true,
+      },
+    },
+  },
+
   mcp: {
     type: 'object',
     label: 'MCP',

@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Box, Text } from 'ink';
-import { CommandSuggestion } from '../../services/EnhancedShellSession.js';
+import { type CommandSuggestion } from '../../services/EnhancedShellSession.js';
 
 interface SmartCommandInputProps {
   value: string;

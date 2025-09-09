@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { CommandKind, SlashCommand } from "./types.js";
+import { CommandKind, type SlashCommand } from './types.js';
 
 export const modeCommand: SlashCommand = {
   name: 'mode',
@@ -18,8 +18,9 @@ export const modeCommand: SlashCommand = {
     },
     {
       name: 'switch',
-      description: 'Switch between different modes. Support: "brat", "normal", "focus".',
+      description:
+        'Switch between different modes. Support: "brat", "normal", "focus".',
       kind: CommandKind.EXTERNAL,
-    }
-  ]
-}
+    },
+  ],
+};

@@ -57,7 +57,8 @@ export function useShellSession(
   const sessionRef = useRef<ShellSession | EnhancedShellSession | null>(null);
   const { config, settings, geminiClient } = options;
 
-  const isEnhancementEnabled = settings.merged.shellEnhancementEnabled ?? true;
+  const isEnhancementEnabled =
+    settings.merged.shell?.shellEnhancementEnabled ?? true;
 
   const handleData = useCallback((data: string) => {
     setState((prevState) => ({
@@ -114,9 +115,10 @@ export function useShellSession(
       const enhancedOptions: EnhancedShellSessionOptions = {
         ...baseOptions,
         enhancement: {
-          syntaxHighlighting: settings.merged.shellSyntaxHighlighting ?? true,
-          autosuggestions: settings.merged.shellAutosuggestions ?? true,
-          aiSuggestions: settings.merged.shellAiSuggestions ?? true,
+          syntaxHighlighting:
+            settings.merged.shell?.shellSyntaxHighlighting ?? true,
+          autosuggestions: settings.merged.shell?.shellAutosuggestions ?? true,
+          aiSuggestions: settings.merged.shell?.shellAiSuggestions ?? true,
         },
         geminiClient,
       };
@@ -150,9 +152,9 @@ export function useShellSession(
     handleExit,
     handleError,
     isEnhancementEnabled,
-    settings.merged.shellSyntaxHighlighting,
-    settings.merged.shellAutosuggestions,
-    settings.merged.shellAiSuggestions,
+    settings.merged.shell?.shellSyntaxHighlighting,
+    settings.merged.shell?.shellAutosuggestions,
+    settings.merged.shell?.shellAiSuggestions,
     geminiClient,
   ]);
 

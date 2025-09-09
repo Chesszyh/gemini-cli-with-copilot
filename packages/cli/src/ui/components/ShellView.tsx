@@ -5,7 +5,7 @@
  */
 
 import { Box, Text } from 'ink';
-import { ShellEnvironmentInfo } from '../../services/EnhancedShellSession.js';
+import { type ShellEnvironmentInfo } from '../../services/EnhancedShellSession.js';
 
 interface ShellViewProps {
   output: string;
