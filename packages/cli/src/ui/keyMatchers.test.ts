@@ -63,8 +63,13 @@ describe('keyMatchers', () => {
       key.name === 'return' && !key.ctrl,
     [Command.ACCEPT_SUGGESTION_REVERSE_SEARCH]: (key: Key) =>
       key.name === 'tab',
-    // Add tests
-    [Command.SEARCH_HISTORY]: (key: Key) => key.ctrl && key.name === 'f',
+    [Command.TOGGLE_SHELL_INPUT_FOCUS]: (key: Key) =>
+      key.ctrl && key.name === 'f',
+    [Command.EXPAND_SUGGESTION]: (key: Key) => key.name === 'right',
+    [Command.COLLAPSE_SUGGESTION]: (key: Key) => key.name === 'left',
+    // TODO
+    [Command.SEARCH_HISTORY]: (key: Key) =>
+      key.ctrl && key.shift && key.name === 'f',
     [Command.TOGGLE_FOCUS_MODE]: (key: Key) => key.ctrl && key.name === 'k',
     [Command.TOGGLE_FUN_MODE]: (key: Key) => key.ctrl && key.name === 'm',
   };
@@ -256,6 +261,11 @@ describe('keyMatchers', () => {
       command: Command.ACCEPT_SUGGESTION_REVERSE_SEARCH,
       positive: [createKey('tab'), createKey('tab', { ctrl: true })],
       negative: [createKey('return'), createKey('space')],
+    },
+    {
+      command: Command.TOGGLE_SHELL_INPUT_FOCUS,
+      positive: [createKey('f', { ctrl: true })],
+      negative: [createKey('f')],
     },
   ];
 
